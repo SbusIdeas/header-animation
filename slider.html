@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliding Header Text</title>
+    <title>Slide Animation Word Display</title>
     <style>
         * {
             margin: 0;
@@ -21,14 +21,20 @@
             padding: 20px;
         }
         
-        .header-container {
+        .container {
             text-align: center;
             background: rgba(255, 255, 255, 0.9);
-            padding: 60px 40px;
+            padding: 40px;
             border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
             max-width: 800px;
             width: 100%;
+        }
+        
+        h1 {
+            color: #000;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
         }
         
         .word-display {
@@ -36,6 +42,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin: 30px 0;
             position: relative;
             overflow: hidden;
         }
@@ -47,7 +54,7 @@
             opacity: 0;
             width: 100%;
             text-align: center;
-            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.7s ease-in-out;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
             color: #2c3e50;
             transform: translateX(100px);
@@ -63,13 +70,48 @@
             transform: translateX(-100px);
         }
         
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        
         @media (max-width: 768px) {
             .word {
                 font-size: 2.5rem;
             }
             
-            .header-container {
-                padding: 40px 25px;
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 25px;
             }
         }
         
@@ -78,20 +120,32 @@
                 font-size: 2rem;
             }
             
-            .header-container {
-                padding: 30px 20px;
+            h1 {
+                font-size: 1.7rem;
             }
             
-            .word-display {
-                height: 90px;
+            button {
+                padding: 10px 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header-container">
+    <div class="container">
+        <h1>Animated Word Display</h1>
+        
         <div class="word-display">
             <!-- Words will be inserted by JavaScript -->
+        </div>
+        
+        <div class="controls">
+            <button id="prevBtn">Previous</button>
+            <button id="toggleBtn">Pause</button>
+            <button id="nextBtn">Next</button>
+        </div>
+        
+        <div class="instructions">
+            <p>Words will automatically transition every 3 seconds. Use the buttons to navigate manually.</p>
         </div>
     </div>
 
@@ -110,8 +164,13 @@
         ];
             
         const wordDisplay = document.querySelector('.word-display');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const toggleBtn = document.getElementById('toggleBtn');
+        
         let currentIndex = 0;
         let interval;
+        let isPlaying = true;
         const transitionTime = 3000; // 3 seconds per word
             
         // Create word elements
@@ -125,6 +184,7 @@
             wordDisplay.appendChild(wordElement);
         });
 
+        
         const wordElements = document.querySelectorAll('.word');
         
         // Function to show a specific word
@@ -149,11 +209,49 @@
             showWord(currentIndex + 1);
         }
             
+        // Function to go to previous word
+        function prevWord() {
+            showWord(currentIndex - 1);
+        }
+            
         // Set up the automatic rotation
         function startRotation() {
             if (interval) clearInterval(interval);
             interval = setInterval(nextWord, transitionTime);
+            isPlaying = true;
+            toggleBtn.textContent = "Pause";
         }
+        
+        // Pause the rotation
+        function pauseRotation() {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+                isPlaying = false;
+                toggleBtn.textContent = "Play";
+            } else {
+                startRotation();
+            }
+        }
+        
+        // Event listeners for buttons
+        prevBtn.addEventListener('click', () => {
+            pauseRotation();
+            prevWord();
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            pauseRotation();
+            nextWord();
+        });
+        
+        toggleBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                pauseRotation();
+            } else {
+                startRotation();
+            }
+        });
             
         startRotation();
     </script>
