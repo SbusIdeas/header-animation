@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .word-display {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #000;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .word-display {
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+            position: relative;
+            perspective: 1000px;
+        }
+        
+        .word {
+            position: absolute;
+            font-size: 3.5rem;
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(50px) rotateX(-90deg);
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+            color: #2c3e50;
+        }
+        
+        .word.active {
+            opacity: 1;
+            transform: translateY(0) rotateX(0);
+        }
+        
+        .word.exiting {
+            opacity: 0;
+            transform: translateY(-50px) rotateX(90deg);
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .word {
+                font-size: 2.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .word {
+                font-size: 2rem;
+            }
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            button {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="word-display">
+        <!-- Words will be inserted by JavaScript -->
+    </div>
+
+    <script>
+        const words = [
+            "Marketing",
+            "Innovation",
+            "TECHNOLOGY",
+            "CUSTOMER EXPERIENCE",
+            "EMPLOYEE ENGAGEMENT",
+            "User experience design",
+            "CHATBOTS",
+            "LOYALTY",
+            "EVENT Management",
+            "APPS"
+        ];
+            
+        const wordDisplay = document.querySelector('.word-display');
+        let currentIndex = 0;
+        let interval;
+        let isPlaying = true;
+        const transitionTime = 3000; // 3 seconds per word
+            
+        // Create word elements
+        words.forEach((word, index) => {
+            const wordElement = document.createElement('div');
+            wordElement.className = 'word';
+            wordElement.textContent = word;
+            if (index === 0) {
+                wordElement.classList.add('active');
+            }
+            wordDisplay.appendChild(wordElement);
+        });
+
+        
+        const wordElements = document.querySelectorAll('.word');
+        
+        // Function to show a specific word
+        function showWord(index) {
+            // Remove active class from current word
+            wordElements[currentIndex].classList.remove('active');
+            wordElements[currentIndex].classList.add('exiting');
+            
+            // Add active class to new word
+            setTimeout(() => {
+                wordElements[currentIndex].classList.remove('exiting');
+                currentIndex = index;
+                if (currentIndex >= words.length) currentIndex = 0;
+                if (currentIndex < 0) currentIndex = words.length - 1;
+                
+                wordElements[currentIndex].classList.add('active');
+                
+                // Reset and animate progress bar
+                setTimeout(() => {
+                    if (isPlaying) {
+                    }
+                }, 50);
+            }, 700); // Match the CSS transition time
+        }
+            
+        // Function to go to next word
+        function nextWord() {
+            showWord(currentIndex + 1);
+        }
+            
+        // Function to go to previous word
+        function prevWord() {
+            showWord(currentIndex - 1);
+        }
+            
+        // Set up the automatic rotation
+        function startRotation() {
+            if (interval) clearInterval(interval);
+            interval = setInterval(nextWord, transitionTime);
+            isPlaying = true;
+        }
+        
+        // Pause the rotation
+        function pauseRotation() {
+            if (interval) {
+                clearInterval(interval);
+                interval = null;
+                isPlaying = false;
+            } else {
+                startRotation();
+            }
+        }
+            
+        startRotation();
+    </script>
+</body>
+</html>
